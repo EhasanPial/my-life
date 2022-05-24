@@ -1,1 +1,33 @@
-https://wormhole.app/On9E8#75skL7RgtH45_L3iD1aEpg
+#define ep 2
+#define tp 3
+
+int duration;
+int distance;
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(tp,OUTPUT);
+  pinMode(ep,INPUT);
+  pinMode(8,OUTPUT);
+  Serial.begin(2400);
+
+}
+
+void loop() {
+  digitalWrite(8,LOW);
+  digitalWrite(tp,LOW);
+  digitalWrite(tp,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(tp,LOW);
+
+  duration=pulseIn(ep,HIGH);
+  distance=0.017*duration;
+  Serial.println(distance);
+
+  if(distance<30.48)
+  {
+    digitalWrite(8,HIGH);
+  }
+  // put your main code here, to run repeatedly:
+
+}
