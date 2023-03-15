@@ -1,0 +1,71 @@
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class Main {
+    public static void main(String[] args) {
+
+
+
+    }
+}
+
+
+class RSA {
+
+    public static BigInteger gcd(BigInteger a, BigInteger b) {
+        if (b.equals(BigInteger.ZERO)) {
+            return a;
+        }
+        return gcd(b, a.mod(b));
+    }
+
+    public static BigInteger modpow(BigInteger base, BigInteger exponent, BigInteger module) {
+        if (module.equals(BigInteger.ONE)) {
+            return BigInteger.ZERO;
+        }
+        BigInteger result = BigInteger.ONE;
+        base = base.mod(module);
+        while (exponent.compareTo(BigInteger.ZERO) > 0) {
+            if (exponent.mod(BigInteger.TWO).equals(BigInteger.ONE)) {
+                result = result.multiply(base).mod(module);
+            }
+            exponent = exponent.shiftRight(1);
+            base = base.multiply(base).mod(module);
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+
+        BigInteger p = BigInteger.valueOf(7); // first prime number
+        BigInteger q = BigInteger.valueOf(31); // second prime number
+        BigInteger n = p.multiply(q); // compute n
+        BigInteger phi = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE)); // compute phi(n)
+
+        // choosing e
+        BigInteger e = BigInteger.valueOf(17); // choose e such that gcd(phi(n), e) = 1
+        while (!gcd(phi, e).equals(BigInteger.ONE)) {
+            e = e.add(BigInteger.ONE);
+        }
+
+        BigInteger d = BigInteger.ZERO;
+        for (BigInteger i = BigInteger.ONE; i.compareTo(phi) < 0; i = i.add(BigInteger.ONE)) {
+            if (i.multiply(e).mod(phi).equals(BigInteger.ONE)) {
+                d = i;
+                break;
+            }
+        }
+
+        BigInteger m = BigInteger.TEN;
+        System.out.println("Plain text " + m);
+
+        // signing
+        BigInteger s = modpow(m, d, n);
+        System.out.println("Signing value " + s);
+
+        // verifying
+        BigInteger k = modpow(s, e, n);
+        System.out.println("Verifying value " + k);
+    }
+}

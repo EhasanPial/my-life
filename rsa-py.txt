@@ -1,0 +1,43 @@
+def gcd(a, b):
+    if b == 0:
+        return a
+    return gcd(b, a % b)
+
+def modpow(base, exponent, module):
+    if module == 1:
+        return 0
+    result = 1
+    base = base % module
+    while exponent > 0:
+        if exponent % 2 == 1:
+            result = (result * base) % module
+        exponent = exponent >> 1
+        base = (base * base) % module
+    return result
+
+p = 7  # first prime number
+q = 31  # second prime number
+n = p * q  # compute n
+phi = (p - 1) * (q - 1)  # compute phi(n)
+
+# choosing e
+e = 17  # choose e such that gcd(phi(n), e) = 1
+while gcd(phi, e) != 1:
+    e += 1
+
+d = 0
+for i in range(1, phi):
+    if (i * e) % phi == 1:
+        d = i
+        break
+
+m = 10
+print("Plain text", m)
+
+# signing
+s = modpow(m, d, n)
+print("Signing value", s)
+
+# verifying
+k = modpow(s, e, n)
+print("Verifying value", k)
